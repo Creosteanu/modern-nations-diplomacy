@@ -1,58 +1,53 @@
 'use strict';
 
 var Q = require('q');
-var mongoose = require('mongoose');
+var ModelFactory = require('./modelFactory');
 
-function mongooseConnect() {
+var Db = Q.async(function *() {
 
-    var deferred = Q.defer();
-
-    var connectionUrl = 'mongodb://root@localhost:27017/modernNationsDiplomacy';
-    var mongooseConfig = {
-        server: {
-            poolSize:      10,
-            socketOptions: {
-                keepAlive: 1
-            }
-        },
-        db:     {
-            numberOfRetries:  10,
-            retryMiliSeconds: 1000
-        }
-    };
-
-    mongoose.connect(connectionUrl, mongooseConfig, function (err) {
-
-        if (err) {
-
-            deferred.reject(err);
-
-        } else {
-
-            deferred.resolve();
-
-        }
-
-    });
-
-    return deferred.promise;
-
-}
-
-var ModelFactory = Q.async(function *() {
-
-    yield mongooseConnect();
+    this.modelFactory = yield new ModelFactory();
 
 });
 
-ModelFactory.prototype.createModel = function (modelName) {
 
-    return mongoose.model(modelName, new mongoose.Schema({}, {strict: false}));
+Db.prototype.find = function(entityName, query){
+
+    var entity = this.modelFactory.createModel(entityName);
+
+    return entity.find(query);
 
 };
 
+Db.prototype.findById = function(entityName, id){
 
-var Db = function () {};
+    var entity = this.modelFactory.createModel(entityName);
 
+    return entity.findById(id);
+
+};
+
+Db.prototype.insert = function(entityName, data){
+
+    var entity = this.modelFactory.createModel(entityName);
+
+    return entity.save(data);
+
+};
+
+Db.prototype.remove = function(entityName, query){
+
+    var entity = this.modelFactory.createModel(entityName);
+
+    return entity.remove(query);
+
+};
+
+Db.prototype.update = function(entityName, query, data){
+
+    var entity = this.modelFactory.createModel(entityName);
+
+    return entity.update(query, data);
+
+};
 
 module.exports = Db;
