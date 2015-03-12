@@ -1,0 +1,29 @@
+{
+	"bitwise":      true,
+	"camelcase":    true,
+	"curly":        true,
+	"eqeqeq":       true,
+	"forin":        true,
+	"immed":        true,
+	"latedef":      true,
+	"newcap":       true,
+	"noarg":        true,
+	"noempty":      true,
+	"nonew":        true,
+	"undef":        true,
+	"unused":       true,
+	"strict":       true,
+	"globalstrict": true,
+	"quotmark":     "single",
+	"node":         true,
+	"browser":      false,
+	"devel":        true,
+	"proto":        true,
+	"esnext":       true,
+	"globals":      {
+		"module":    true,
+		"require":   true,
+		"process":   true,
+		"__dirname": true
+	}
+}
