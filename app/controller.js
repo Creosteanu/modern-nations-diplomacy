@@ -1,12 +1,31 @@
 'use strict';
 
-var db = require('./db');
+var Q = require('q');
+var Db = require('./db');
 
-var Controller = function(){};
+var Controller = Q.async(function*() {
 
-Controller.prototype.getCollection = function(request, response){
+    this.db = yield new Db();
 
+});
 
+Controller.prototype.getCollection = function (request, response) {
+
+    var entity = request.params.resource;
+
+    var collection = this.db.find(entity);
+
+    response.send(collection);
+
+};
+
+Controller.prototype.create = function (request, response) {
+
+    var entity = request.params.resource;
+
+    var model = this.db.insert(entity, request.body);
+
+    response.send(model);
 
 };
 
