@@ -1,12 +1,9 @@
 'use strict';
 
-var Q = require('q');
 var mongoose = require('mongoose');
 var Entity = require('./entity');
 
 function mongooseConnect() {
-
-    var deferred = Q.defer();
 
     var connectionUrl = 'mongodb://root@localhost:27017/modernNationsDiplomacy';
     var mongooseConfig = {
@@ -22,35 +19,25 @@ function mongooseConnect() {
         }
     };
 
-    mongoose.connect(connectionUrl, mongooseConfig, function (err) {
-
-        if (err) {
-
-            deferred.reject(err);
-
-        } else {
-
-            deferred.resolve();
-
-        }
-
-    });
-
-    return deferred.promise;
+    mongoose.connect(connectionUrl, mongooseConfig);
 
 }
 
-var ModelFactory = Q.async(function *() {
+var ModelFactory = function () {
 
-    yield mongooseConnect();
+    mongooseConnect();
 
-});
+    this.models = {};
+
+};
 
 ModelFactory.prototype.createModel = function (modelName) {
 
-    var mongooseModel=  mongoose.model(modelName, new mongoose.Schema({}, {strict: false}));
+    if (!this.models[modelName]) {
+        this.models[modelName] = mongoose.model(modelName, new mongoose.Schema({}, {strict: false}));
+    }
 
-    return new Entity(mongooseModel);
+    return new Entity(this.models[modelName]);
 
 };
 

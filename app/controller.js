@@ -2,31 +2,31 @@
 
 var Q = require('q');
 var Db = require('./db');
+var db = new Db();
 
-var Controller = Q.async(function*() {
+var Controller = function () {
 
-    this.db = yield new Db();
 
-});
+};
 
-Controller.prototype.getCollection = function (request, response) {
+Controller.prototype.getCollection = Q.async(function* (request, response) {
 
-    var entity = request.params.resource;
+    var entity = request.params.entity;
 
-    var collection = this.db.find(entity);
+    var collection = yield db.find(entity);
 
     response.send(collection);
 
-};
+});
 
-Controller.prototype.create = function (request, response) {
+Controller.prototype.create = Q.async(function* (request, response) {
 
-    var entity = request.params.resource;
+    var entity = request.params.entity;
 
-    var model = this.db.insert(entity, request.body);
+    var model = yield db.insert(entity, request.body);
 
     response.send(model);
 
-};
+});
 
 module.exports = Controller;

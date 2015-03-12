@@ -1,18 +1,17 @@
 'use strict';
 
-var Q = require('q');
 var ModelFactory = require('./modelFactory');
+var modelFactory = new ModelFactory();
 
-var Db = Q.async(function *() {
+var Db = function () {
 
-    this.modelFactory = yield new ModelFactory();
 
-});
+};
 
 
 Db.prototype.find = function(entityName, query){
 
-    var entity = this.modelFactory.createModel(entityName);
+    var entity = modelFactory.createModel(entityName);
 
     return entity.find(query);
 
@@ -20,7 +19,7 @@ Db.prototype.find = function(entityName, query){
 
 Db.prototype.findById = function(entityName, id){
 
-    var entity = this.modelFactory.createModel(entityName);
+    var entity = modelFactory.createModel(entityName);
 
     return entity.findById(id);
 
@@ -28,7 +27,7 @@ Db.prototype.findById = function(entityName, id){
 
 Db.prototype.insert = function(entityName, data){
 
-    var entity = this.modelFactory.createModel(entityName);
+    var entity = modelFactory.createModel(entityName);
 
     return entity.save(data);
 
@@ -36,7 +35,7 @@ Db.prototype.insert = function(entityName, data){
 
 Db.prototype.remove = function(entityName, query){
 
-    var entity = this.modelFactory.createModel(entityName);
+    var entity = modelFactory.createModel(entityName);
 
     return entity.remove(query);
 
@@ -44,7 +43,7 @@ Db.prototype.remove = function(entityName, query){
 
 Db.prototype.update = function(entityName, query, data){
 
-    var entity = this.modelFactory.createModel(entityName);
+    var entity = modelFactory.createModel(entityName);
 
     return entity.update(query, data);
 
