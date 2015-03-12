@@ -9,7 +9,7 @@ var Controller = function () {
 
 };
 
-Controller.prototype.getCollection = Q.async(function* (request, response) {
+Controller.prototype.find = Q.async(function* (request, response) {
 
     var entity = request.params.entity;
 
@@ -19,11 +19,46 @@ Controller.prototype.getCollection = Q.async(function* (request, response) {
 
 });
 
-Controller.prototype.create = Q.async(function* (request, response) {
+Controller.prototype.insert = Q.async(function* (request, response) {
 
     var entity = request.params.entity;
+    var data = request.body;
 
-    var model = yield db.insert(entity, request.body);
+    var model = yield db.insert(entity, data);
+
+    response.send(model);
+
+});
+
+Controller.prototype.findById = Q.async(function* (request, response) {
+
+    var entity = request.params.entity;
+    var _id = request.params._id;
+
+    var model = yield db.findById(entity, _id);
+
+    response.send(model);
+
+});
+
+Controller.prototype.remove = Q.async(function* (request, response) {
+
+    var entity = request.params.entity;
+    var _id = request.params.id;
+
+    var model = yield db.remove(entity, {_id: _id});
+
+    response.send(model);
+
+});
+
+Controller.prototype.update = Q.async(function* (request, response) {
+
+    var entity = request.params.entity;
+    var _id = request.params.id;
+    var data = request.body;
+
+    var model = yield db.update(entity, {_id: _id}, data);
 
     response.send(model);
 

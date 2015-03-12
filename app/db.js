@@ -45,7 +45,7 @@ Db.prototype.update = function(entityName, query, data){
 
     var entity = modelFactory.createModel(entityName);
 
-    return entity.update(query, data);
+    return entity.update(query, data, {overwrite:true});
 
 };
 

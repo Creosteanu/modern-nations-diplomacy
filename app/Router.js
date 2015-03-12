@@ -29,8 +29,11 @@ Router.prototype.initRoutes = function (app) {
 
     try {
 
-        app.get('/:entity', errorHandlerWrapper(controller.getCollection));
-        app.post('/:entity', errorHandlerWrapper(controller.create));
+        app.get('/:entity', errorHandlerWrapper(controller.find));
+        app.post('/:entity', errorHandlerWrapper(controller.insert));
+        app.get('/:entity/:_id', errorHandlerWrapper(controller.findById));
+        app.put('/:entity/:_id', errorHandlerWrapper(controller.update));
+        app.delete('/:entity', errorHandlerWrapper(controller.remove));
 
     }
     catch (exception) {
