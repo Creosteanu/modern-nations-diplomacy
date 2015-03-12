@@ -24,6 +24,10 @@ app.use(multer());
 app.use(compression());
 app.use(errorHandler());
 
+var Router = require('./router');
+var router = new Router();
+router.initRoutes(app);
+
 app.listen(app.get('port'), function () {
     console.log('Started server on ' + app.get('port'));
 });
