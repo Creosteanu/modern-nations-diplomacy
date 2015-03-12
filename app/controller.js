@@ -58,9 +58,9 @@ Controller.prototype.update = Q.async(function* (request, response) {
     var _id = request.params.id;
     var data = request.body;
 
-    var model = yield db.update(entity, {_id: _id}, data);
+    yield db.update(entity, {_id: _id}, data);
 
-    response.send(model);
+    response.send(data);
 
 });
 
