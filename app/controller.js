@@ -30,6 +30,25 @@ Controller.prototype.insert = Q.async(function* (request, response) {
 
 });
 
+Controller.prototype.replace = Q.async(function* (request, response) {
+
+    var entity = request.params.entity;
+    var data = request.body;
+
+    yield db.remove(entity);
+
+    for (var i = 0; i < data.length; i++) {
+
+        var model = data[i];
+
+        yield db.insert(entity, model);
+
+    }
+
+    response.send({});
+
+});
+
 Controller.prototype.findById = Q.async(function* (request, response) {
 
     var entity = request.params.entity;

@@ -4,27 +4,81 @@ var _ = require('lodash');
 var Q = require('q');
 var restler = require('./harmonyRestler');
 
-var mainTick = Q.async(function *() {
+function getMaxGdp(countries) {
 
-    console.log('Getting countries');
-    var countries = yield restler.get('http://localhost/country');
+    var maxCountry = _.max(countries, function (country) {return country.gdp;});
 
-    var maxGdp = _.max(countries, function (country) {return country.gdp;});
-    maxGdp = maxGdp.pop;
+    return maxCountry.gdp;
 
-    console.log('updating populations');
+}
+
+function updateGdp(countries) {
+
+    console.log('updating gdp');
+
+    var maxGrowth = 0.1;
+    var maxGdp = getMaxGdp(countries);
+
     for (var i = 0; i < countries.length; i++) {
 
         var country = countries[i];
 
-        var gdpRange = country.gdp / maxGdp * 100;
+        var gdpRange = (maxGdp - country.gdp) / maxGdp;
+        var gdpGrowth = gdpRange * maxGrowth;
 
-        var popGrowth = (75 - gdpRange) / 25;
-
-        country.pop = country.pop * (1 + popGrowth / 100);
-        country.gdp = country.gdp * (1 + popGrowth / 100);
+        country.gdp *= (1 + gdpGrowth);
 
     }
+
+}
+
+function updatePop(countries) {
+
+    console.log('updating population');
+
+    var maxGrowth = 0.1;
+    var minGrowth = -0.03;
+    var maxGdp = getMaxGdp(countries);
+
+    for (var i = 0; i < countries.length; i++) {
+
+        var country = countries[i];
+
+        var gdpRange = (maxGdp - country.gdp) / maxGdp;
+        var popGrowth = gdpRange * (maxGrowth - minGrowth) + minGrowth;
+
+        country.pop = country.pop * (1 + popGrowth);
+
+    }
+
+}
+
+var getCountries = function () {
+
+    console.log('Getting countries');
+
+    return restler.get('http://localhost/country');
+
+}
+
+var saveCountries = function (countries) {
+
+    console.log('Saving countries');
+
+    return restler.putJson('http://localhost/country', countries);
+
+}
+
+var mainTick = Q.async(function *() {
+
+    var countries = yield getCountries();
+
+
+    updatePop(countries);
+    //updateGdp(countries);
+
+    yield saveCountries(countries);
+
 });
 
 var mainTickWithErrorHandling = Q.async(function*() {
@@ -43,6 +97,6 @@ var mainTickWithErrorHandling = Q.async(function*() {
 
 var CronJob = require('cron').CronJob;
 
-var tick = new CronJob('* * * * * *', mainTickWithErrorHandling);
+var tick = new CronJob('*/3 * * * * *', mainTickWithErrorHandling);
 
 tick.start();
